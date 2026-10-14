@@ -1,5 +1,5 @@
 
-name: Website CI
+name: Website CI/CD
 
 on:
   push:
@@ -7,16 +7,23 @@ on:
       - main
 
 jobs:
-  check-website:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Get website code
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Check index.html exists
+      - name: Verify website file
         run: test -f index.html
 
-      - name: Show success
-        run: echo "Website check passed!"
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            sudo cp /var/www/html/index.html /tmp/old-index.html 2>/dev/null || true
+            sudo systemctl is-active nginx
 
