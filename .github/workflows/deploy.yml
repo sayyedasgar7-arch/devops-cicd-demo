@@ -14,7 +14,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Verify website file
+      - name: Verify website
         run: test -f index.html
 
       - name: Deploy to EC2
@@ -24,6 +24,9 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            sudo cp /var/www/html/index.html /tmp/old-index.html 2>/dev/null || true
-            sudo systemctl is-active nginx
+            cd ~/devops-cicd-demo
+            git pull origin main
+            sudo cp index.html /var/www/html/index.html
+            sudo systemctl reload nginx
+
 
