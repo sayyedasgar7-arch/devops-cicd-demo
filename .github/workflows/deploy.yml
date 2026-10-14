@@ -1,0 +1,22 @@
+
+name: Website CI
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  check-website:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Get website code
+        uses: actions/checkout@v4
+
+      - name: Check index.html exists
+        run: test -f index.html
+
+      - name: Show success
+        run: echo "Website check passed!"
+
